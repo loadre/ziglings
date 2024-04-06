@@ -49,7 +49,7 @@ const Path = struct {
 //
 // Please fill in the body of this function!
 fn makePath(from: *Place, to: *Place, dist: u8) Path {
-
+    return Path{ .from = from, .to = to, .dist = dist };
 }
 
 // Using our new function, these path definitions take up considerably less
@@ -76,6 +76,21 @@ const f_paths = [_]Path{makePath(&f, &d, 7)};
 //    ...
 //
 // Feel free to implement something like that as a SUPER BONUS EXERCISE!
+// TODO: maybe split string by '->' and get first token as name
+fn myMakePath(comptime path: []const u8) []Path {
+    const from = path[0];
+    const destinations = path[6..];
+    comptime var paths: []Path = undefined;
+    comptime var idx = 0;
+    inline while (idx < destinations.len) : (idx += 5) {
+        const i = if (idx == 0) 0 else idx - 5;
+        paths[i] = Path{ .from = from, .to = destinations[idx], .dist = destinations[idx + 2] };
+    }
+    return paths;
+}
+// const a_paths = myMakePath("a -> (b[2])");
+// const b_paths = myMakePath("b -> (a[2] d[1])");
+// const c_paths = myMakePath("c -> (d[2] e[2])");
 
 const TripItem = union(enum) {
     place: *const Place,
