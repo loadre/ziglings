@@ -35,7 +35,7 @@ pub fn main() !void {
         // by doing nothing
         //
         // we want to catch error.PathAlreadyExists and do nothing
-        ??? => {},
+        error.PathAlreadyExists => {},
         // if is any other unexpected error we just propagate it through
         else => return e,
     };
@@ -44,7 +44,7 @@ pub fn main() !void {
     // wait a minute
     // opening a directory might fail!
     // what should we do here?
-    var output_dir: std.fs.Dir = cwd.openDir("output", .{});
+    var output_dir: std.fs.Dir = try cwd.openDir("output", .{});
     defer output_dir.close();
 
     // we try to open the file `zigling.txt`,
@@ -55,7 +55,7 @@ pub fn main() !void {
     // but here we are not yet done writing to the file
     // if only there are a keyword in zig that
     // allow you "defer" code execute to the end of scope...
-    file.close();
+    defer file.close();
 
     // !you are not allow to switch this two lines to before file closing line!
     const byte_written = try file.write("It's zigling time!");
@@ -86,6 +86,7 @@ pub fn main() !void {
 //
 // Question:
 //   - what should you do if you want to also read the file after opening it?
+//      > pass something via the anonymous struct in the function?
 //   - go to documentation of the struct `std.fs.Dir` here
 //     https://ziglang.org/documentation/master/std/#std.fs.Dir
 //       - can you find a function for opening a file? how about deleting a file?
